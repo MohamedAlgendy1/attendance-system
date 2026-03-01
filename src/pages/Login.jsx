@@ -1,7 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-// لاحقًا هنستخدم axios
-// import axios from "axios";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function Login() {
   const [role, setRole] = useState("admin");
@@ -12,6 +10,21 @@ function Login() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // ✅ لو المستخدم already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const savedRole = localStorage.getItem("role");
+
+    if (token && savedRole) {
+      if (savedRole === "admin") {
+        navigate("/admin-dashboard", { replace: true });
+      } else {
+        navigate("/faculty-dashboard", { replace: true });
+      }
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -20,21 +33,10 @@ function Login() {
     setMessage("");
 
     try {
-      // 👇 ده هيبقى API Call حقيقي
-      /*
-      const response = await axios.post("/api/auth/login", {
-        username,
-        password,
-        role
-      });
-
-      const { token, role: userRole } = response.data;
-      */
-
-      // مؤقتًا Simulation
+      // 🔥 هنا لاحقًا هتحط axios request حقيقي
       const fakeResponse = {
         token: "fake-jwt-token",
-        role: role
+        role: role,
       };
 
       localStorage.setItem("token", fakeResponse.token);
@@ -43,12 +45,15 @@ function Login() {
       setIsSuccess(true);
       setMessage("Login successful ✔");
 
+      // 👇 يرجعه للصفحة اللي كان عايز يدخلها
+      const redirectPath =
+        location.state?.from?.pathname ||
+        (fakeResponse.role === "admin"
+          ? "/admin-dashboard"
+          : "/faculty-dashboard");
+
       setTimeout(() => {
-        if (fakeResponse.role === "admin") {
-          navigate("/admin-dashboard");
-        } else {
-          navigate("/faculty-dashboard");
-        }
+        navigate(redirectPath, { replace: true });
       }, 800);
 
     } catch {

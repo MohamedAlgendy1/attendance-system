@@ -110,8 +110,6 @@ function App() {
         <Route path="/qr-display" element={<QRDisplay />} />
         <Route path="/scan/:lectureId" element={<StudentScan />} />
 
-       
-        <Route path="/start-lecture" element={<StartLecture />} />
 
       </Routes>
 

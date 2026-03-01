@@ -1,15 +1,17 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 function ProtectedRoute({ children, allowedRole }) {
+  const location = useLocation();
+
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
-  // لو مفيش توكن → يرجع Login
+  // 1️⃣ مفيش توكن → رجعه لصفحة الدخول
   if (!token) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
-  // لو فيه Role محدد ومش مطابق
+  // 2️⃣ فيه Role مطلوب ومش مطابق
   if (allowedRole && role !== allowedRole) {
     return <Navigate to="/" replace />;
   }

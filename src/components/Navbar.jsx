@@ -7,22 +7,24 @@ function Navbar() {
   const role = localStorage.getItem("role");
 
   const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("role");
-    navigate("/");
+    localStorage.clear(); // يمسح كل بيانات الجلسة
+    navigate("/", { replace: true });
+  };
+
+  const goDashboard = () => {
+    if (role === "admin") {
+      navigate("/admin-dashboard");
+    } else if (role === "faculty") {
+      navigate("/faculty-dashboard");
+    } else {
+      navigate("/");
+    }
   };
 
   return (
     <nav className="navbar">
-      <h2
-        style={{ cursor: "pointer" }}
-        onClick={() =>
-          role === "admin"
-            ? navigate("/admin-dashboard")
-            : navigate("/faculty-dashboard")
-        }
-      >
-       attendance
+      <h2 style={{ cursor: "pointer" }} onClick={goDashboard}>
+        Attendance System
       </h2>
 
       <div className="nav-links">

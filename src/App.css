@@ -940,156 +940,143 @@
 }
 
 /*___________________attendancy and ViewLectures_____________________*/
-/* ======= Table Container ======= */
+/* ===== View Lectures Page ===== */
+
 .table-container {
-  width: 85%;
-  margin: 50px auto;
-  text-align: center;
+  max-width: 1100px;
+  margin: 40px auto;
+  background: rgba(20, 20, 20, 0.95);
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
   color: white;
 }
 
 .table-title {
-  margin-bottom: 30px;
-  font-size: 32px;
-  font-weight: bold;
+  text-align: center;
+  margin-bottom: 25px;
+  font-weight: 600;
 }
 
-/* ======= Table ======= */
+/* ===== Table ===== */
+
 .student-table {
   width: 100%;
   border-collapse: collapse;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(10px);
-  border-radius: 10px;
   overflow: hidden;
+  border-radius: 12px;
 }
 
 .student-table thead {
-  background: #e5e7eb;
-  color: black;
+  background: #1e293b;
 }
 
-.student-table th,
+.student-table th {
+  padding: 14px;
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .student-table td {
-  padding: 15px;
+  padding: 12px;
   text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .student-table tbody tr {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  transition: background 0.3s;
+  transition: 0.2s ease;
 }
 
 .student-table tbody tr:hover {
   background: rgba(255, 255, 255, 0.05);
 }
 
-/* ======= Buttons ======= */
-.edit-btn,
+/* ===== Buttons ===== */
+
+.edit-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  cursor: pointer;
+  margin-right: 5px;
+  transition: 0.3s;
+}
+
+.edit-btn:hover {
+  background: #2563eb;
+}
+
 .delete-btn {
   padding: 6px 12px;
   border-radius: 6px;
   border: none;
-  cursor: pointer;
-  font-size: 13px;
-  transition: all 0.3s ease;
-}
-
-.edit-btn {
-  background: #facc15;
-  margin-right: 8px;
-}
-
-.edit-btn:hover {
-  opacity: 0.85;
-}
-
-.delete-btn {
   background: #ef4444;
   color: white;
-}
-
-.delete-btn:hover {
-  opacity: 0.85;
-}
-
-/* ======= Status Colors for Attendance ===== */
-.status-present {
-  color: #22c55e;
-  font-weight: bold;
-}
-
-.status-absent {
-  color: #ef4444;
-  font-weight: bold;
-}
-
-/* ======= Footer ======= */
-.footer {
-  text-align: center;
-  padding: 15px;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  font-size: 12px;
-  margin-top: 50px;
-}
-
-/* ======= Page Background ======= */
-.page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: url("https://images.unsplash.com/photo-1523580494863-6f3031224c94")
-    no-repeat center center/cover;
-}
-
-/* ====== Student Scan Form ====== */
-.student-scan-container {
-  max-width: 500px;
-  margin: 50px auto;
-  padding: 30px;
-  background: rgba(0,0,0,0.65);
-  backdrop-filter: blur(12px);
-  border-radius: 15px;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.student-scan-container input {
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-}
-
-.student-scan-container button {
-  padding: 12px;
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
   transition: 0.3s;
 }
 
-.student-scan-container button:hover {
-  background: #1e40af;
+.delete-btn:hover {
+  background: #dc2626;
 }
 
-.student-scan-status {
-  margin-top: 20px;
-  font-weight: bold;
+/* ===== Messages ===== */
+
+.success-message {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
   text-align: center;
 }
 
-/* Optional: status colors */
+.error-message {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 768px) {
+  .table-container {
+    padding: 20px;
+  }
+
+  .student-table th,
+  .student-table td {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    margin-bottom: 5px;
+    width: 100%;
+  }
+}
+
+
+/*________________attendance_________________*/
 .status-present {
   color: #22c55e;
+  font-weight: bold;
 }
 
 .status-absent {
   color: #ef4444;
+  font-weight: bold;
+}
+
+.error-message {
+  color: #ef4444;
+  margin-bottom: 10px;
 }

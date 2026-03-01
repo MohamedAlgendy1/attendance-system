@@ -9,6 +9,12 @@ function StudentScan() {
 
   useEffect(() => {
     const checkAttendance = async () => {
+      if (!navigator.geolocation) {
+        setStatus("Geolocation not supported ❌");
+        setLoading(false);
+        return;
+      }
+
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           try {
@@ -26,7 +32,7 @@ function StudentScan() {
             } else {
               setStatus(`❌ ${response.data.message}`);
             }
-          } catch {
+          } catch  {
             setStatus("Server error ❌");
           } finally {
             setLoading(false);

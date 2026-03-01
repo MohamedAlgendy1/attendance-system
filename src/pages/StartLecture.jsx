@@ -1,4 +1,4 @@
-import React, { useState,  useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import QRCode from "react-qr-code";
 
 function StartLecture() {
@@ -24,8 +24,13 @@ function StartLecture() {
   };
 
   const handleStart = () => {
-    if (!title  ||!subject || !room || !doctor) {
+    if (!title || !subject||  !room || !doctor) {
       alert("Please fill all fields");
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      alert("Geolocation not supported");
       return;
     }
 
@@ -46,7 +51,6 @@ function StartLecture() {
         setLectureData(newLecture);
         setTimeLeft(120);
 
-        // ✅ نبدأ timer هنا مش في effect
         timerRef.current = setInterval(() => {
           setTimeLeft((prev) => {
             if (prev <= 1) {
@@ -63,8 +67,17 @@ function StartLecture() {
     );
   };
 
+  // ✅ مهم جدًا تنظيف التايمر لو خرج من الصفحة
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
+
   const qrLink = lectureData
-    ?` https://attendance-system-nine-wheat.vercel.app/scan/${lectureData.id}`
+    ? `https://attendance-system-nine-wheat.vercel.app/scan/${lectureData.id}`
     : "";
 
   return (
