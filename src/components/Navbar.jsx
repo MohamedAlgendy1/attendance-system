@@ -22,7 +22,7 @@ function Navbar() {
             : navigate("/faculty-dashboard")
         }
       >
-       Proxiscan
+       attendance
       </h2>
 
       <div className="nav-links">

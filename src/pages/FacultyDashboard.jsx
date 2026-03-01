@@ -5,31 +5,32 @@ import Navbar from "../components/Navbar";
 function FacultyDashboard() {
   const navigate = useNavigate();
 
+  // تحقق مرة واحدة هل المتصفح بيدعم الجيولوكيشن
+  const isGeolocationSupported = typeof window !== "undefined" &&
+    "geolocation" in navigator;
+
   const [location, setLocation] = useState(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(
+    isGeolocationSupported
+      ? ""
+      : "Geolocation is not supported by your browser"
+  );
 
   useEffect(() => {
-    const getLocation = () => {
-      if (!navigator.geolocation) {
-        setError("Geolocation is not supported by your browser");
-        return;
+    if (!isGeolocationSupported) return;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      () => {
+        setError("Permission denied or location unavailable");
       }
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        () => {
-          setError("Permission denied or location unavailable");
-        }
-      );
-    };
-
-    getLocation();
-  }, []);
+    );
+  }, [isGeolocationSupported]);
 
   return (
     <div className="page">
@@ -41,15 +42,19 @@ function FacultyDashboard() {
         <div className="location-box">
           <h3>Faculty Location</h3>
 
-          {error && <p>{error}</p>}
+          {error && (
+            <p style={{ color: "#ef4444", textAlign: "center" }}>
+              {error}
+            </p>
+          )}
 
           {location ? (
-            <p>
-              Latitude: {location.lat} <br />
-              Longitude: {location.lng}
+            <p style={{ textAlign: "center" }}>
+              Latitude: {location.lat.toFixed(5)} <br />
+              Longitude: {location.lng.toFixed(5)}
             </p>
           ) : (
-            !error && <p>Getting location...</p>
+            !error && <p style={{ textAlign: "center" }}>Getting location...</p>
           )}
         </div>
 
@@ -101,7 +106,7 @@ function FacultyDashboard() {
       </div>
 
       <footer className="footer">
-        © 2026 PROXISCAN | All Rights Reserved
+        © 2026 Attendify | All Rights Reserved
       </footer>
     </div>
   );

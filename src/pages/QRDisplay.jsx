@@ -5,7 +5,7 @@ import QRCode from "react-qr-code";
 function QRDisplay() {
   const navigate = useNavigate();
 
-  // تحميل بيانات المحاضرة من localStorage
+  // جلب بيانات المحاضرة من localStorage
   const [lectureData] = useState(() => {
     const stored = localStorage.getItem("activeLecture");
     return stored ? JSON.parse(stored) : null;
@@ -19,8 +19,10 @@ function QRDisplay() {
       return;
     }
 
+    // هنا ما فيش timer، فقط علامة expired جاهزة للاستخدام لو أحببت
     const interval = setInterval(() => {
-      if (Date.now() > lectureData.expiresAt) {
+      // مثال: لو استخدمت expiresAt مستقبليًا
+      if (lectureData.expiresAt && Date.now() > lectureData.expiresAt) {
         setExpired(true);
       }
     }, 1000);
@@ -30,8 +32,7 @@ function QRDisplay() {
 
   if (!lectureData) return null;
 
-  // 🔥 لينك ngrok بتاعك
-  const qrLink = `https://columellate-folksily-rod.ngrok-free.dev/scan/${lectureData.id}`;
+  const qrLink = `https://attendance-system-nine-wheat.vercel.app/scan/${lectureData.id}`;
 
   return (
     <div className="qr-page">
@@ -41,12 +42,10 @@ function QRDisplay() {
 
           {!expired ? (
             <div className="qr-box">
-              <QRCode value={qrLink} size={280} />
+              <QRCode value={qrLink} size={300} />
             </div>
           ) : (
-            <div className="expired-box">
-              QR Code Expired
-            </div>
+            <div className="expired-box">QR Code Expired</div>
           )}
 
           <p className="qr-info">
@@ -57,7 +56,7 @@ function QRDisplay() {
       </div>
 
       <footer className="footer">
-        © 2026 PROXISCAN | All Rights Reserved
+        © 2026 Attendify | All Rights Reserved
       </footer>
     </div>
   );

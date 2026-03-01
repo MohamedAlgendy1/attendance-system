@@ -1,8 +1,12 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
+// لاحقًا هنستخدم axios
+// import axios from "axios";
 
 function AddFaculty() {
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [formData, setFormData] = useState({
     email: "",
@@ -20,19 +24,53 @@ function AddFaculty() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setSuccess(true);
+    setLoading(true);
+    setSuccess(false);
+    setErrorMessage("");
 
-    setTimeout(() => {
-      setSuccess(false);
-    }, 2000);
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error("Unauthorized");
+      }
+
+      // 👇 ده مكان API الحقيقي
+      /*
+      await axios.post("/api/faculty", formData, {
+        headers: {
+          Authorization: Bearer ${token}
+        }
+      });
+      */
+
+      // Simulation مؤقت
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setSuccess(true);
+
+      // مسح الفورم بعد النجاح
+      setFormData({
+        email: "",
+        name: "",
+        password: "",
+        phone: "",
+        code: "",
+        department: ""
+      });
+
+    } catch {
+      setErrorMessage("Failed to add faculty");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="page">
-
       <Navbar />
 
       <div className="dashboard-container">
@@ -45,6 +83,12 @@ function AddFaculty() {
           {success && (
             <p style={{ color: "#22c55e", textAlign: "center", marginBottom: "10px" }}>
               Faculty Added Successfully ✅
+            </p>
+          )}
+
+          {errorMessage && (
+            <p style={{ color: "#ef4444", textAlign: "center", marginBottom: "10px" }}>
+              {errorMessage}
             </p>
           )}
 
@@ -108,7 +152,9 @@ function AddFaculty() {
               />
             </div>
 
-            <button type="submit">Add</button>
+            <button type="submit" disabled={loading}>
+              {loading ? "Adding..." : "Add"}
+            </button>
 
           </form>
 
@@ -118,7 +164,6 @@ function AddFaculty() {
       <footer className="footer">
         © 2025 Attendify
       </footer>
-
     </div>
   );
 }

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+// لاحقًا هنستخدم axios
+// import axios from "axios";
 
 function Login() {
   const [role, setRole] = useState("admin");
@@ -7,46 +9,53 @@ function Login() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    // ================= ADMIN LOGIN =================
-    if (role === "admin") {
-      if (username === "admin" && password === "1234") {
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("role", "admin");
+    setLoading(true);
+    setMessage("");
 
-        setIsSuccess(true);
-        setMessage("Login successful ✔");
+    try {
+      // 👇 ده هيبقى API Call حقيقي
+      /*
+      const response = await axios.post("/api/auth/login", {
+        username,
+        password,
+        role
+      });
 
-        setTimeout(() => {
+      const { token, role: userRole } = response.data;
+      */
+
+      // مؤقتًا Simulation
+      const fakeResponse = {
+        token: "fake-jwt-token",
+        role: role
+      };
+
+      localStorage.setItem("token", fakeResponse.token);
+      localStorage.setItem("role", fakeResponse.role);
+
+      setIsSuccess(true);
+      setMessage("Login successful ✔");
+
+      setTimeout(() => {
+        if (fakeResponse.role === "admin") {
           navigate("/admin-dashboard");
-        }, 1000);
-      } else {
-        setIsSuccess(false);
-        setMessage("Invalid Admin credentials");
-      }
-    }
-
-    // ================= FACULTY LOGIN =================
-    if (role === "faculty") {
-      if (username === "1111" && password === "1111") {
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("role", "faculty");
-
-        setIsSuccess(true);
-        setMessage("Login successful ✔");
-
-        setTimeout(() => {
+        } else {
           navigate("/faculty-dashboard");
-        }, 1000);
-      } else {
-        setIsSuccess(false);
-        setMessage("Invalid Faculty credentials");
-      }
+        }
+      }, 800);
+
+    } catch {
+      setIsSuccess(false);
+      setMessage("Invalid credentials");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,7 +68,6 @@ function Login() {
             {role === "admin" ? "Admin Login" : "Faculty Login"}
           </h2>
 
-          {/* Role Selector */}
           <div style={{ marginBottom: "15px" }}>
             <select
               value={role}
@@ -74,7 +82,7 @@ function Login() {
           <form onSubmit={handleLogin}>
             <input
               type="text"
-              placeholder={role === "admin" ? "Username" : "Phone Number"}
+              placeholder="Username / Phone"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -88,7 +96,9 @@ function Login() {
               required
             />
 
-            <button type="submit">Login</button>
+            <button type="submit" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
+            </button>
           </form>
 
           {message && (

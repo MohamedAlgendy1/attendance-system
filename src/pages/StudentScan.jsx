@@ -1,99 +1,66 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 
 function StudentScan() {
   const { lectureId } = useParams();
-  const [studentName, setStudentName] = useState("");
-  const [studentId, setStudentId] = useState("");
-  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState("Checking location...");
+  const [loading, setLoading] = useState(true);
 
-  const handleSubmit = () => {
-    if (!studentName || !studentId) {
-      setMessage("Please enter all fields");
-      return;
-    }
+  useEffect(() => {
+    const checkAttendance = async () => {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const response = await axios.post(
+              "http://localhost:5000/api/attendance/scan",
+              {
+                lectureId,
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+              }
+            );
 
-    // نجيب الحضور القديم
-    const attendance =
-      JSON.parse(localStorage.getItem("attendance")) || [];
-
-    // نتأكد إن الطالب مسجلش قبل كده
-    const alreadyMarked = attendance.find(
-      (item) =>
-        item.lectureId === lectureId && item.studentId === studentId
-    );
-
-    if (alreadyMarked) {
-      setMessage("You already marked attendance!");
-      return;
-    }
-
-    // نسجل حضور جديد
-    const newRecord = {
-      lectureId,
-      studentName,
-      studentId,
-      time: new Date().toLocaleString(),
+            if (response.data.success) {
+              setStatus("✅ Attendance ثبت بنجاح");
+            } else {
+              setStatus(`❌ ${response.data.message}`);
+            }
+          } catch {
+            setStatus("Server error ❌");
+          } finally {
+            setLoading(false);
+          }
+        },
+        () => {
+          setStatus("Location permission denied ❌");
+          setLoading(false);
+        }
+      );
     };
 
-    const updatedAttendance = [...attendance, newRecord];
-    localStorage.setItem(
-      "attendance",
-      JSON.stringify(updatedAttendance)
-    );
-
-    setMessage("Attendance marked successfully ✅");
-    setStudentName("");
-    setStudentId("");
-  };
+    checkAttendance();
+  }, [lectureId]);
 
   return (
-    <div style={containerStyle}>
-      <h2>Mark Attendance</h2>
-      <p>Lecture ID: {lectureId}</p>
+    <div className="scan-page">
+      <div className="scan-card">
+        <h2>Student Attendance</h2>
 
-      <input
-        type="text"
-        placeholder="Enter Your Name"
-        value={studentName}
-        onChange={(e) => setStudentName(e.target.value)}
-        style={inputStyle}
-      />
-
-      <input
-        type="text"
-        placeholder="Enter Your ID"
-        value={studentId}
-        onChange={(e) => setStudentId(e.target.value)}
-        style={inputStyle}
-      />
-
-      <button onClick={handleSubmit} style={buttonStyle}>
-        Confirm
-      </button>
-
-      <p>{message}</p>
+        <div
+          className={`status-box ${
+            loading
+              ? "loading"
+              : status.includes("✅")
+              ? "success"
+              : "error"
+          }`}
+        >
+          {status}
+        </div>
+      </div>
     </div>
   );
 }
-
-const containerStyle = {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  height: "100vh",
-};
-
-const inputStyle = {
-  margin: "10px",
-  padding: "10px",
-  width: "250px",
-};
-
-const buttonStyle = {
-  padding: "10px 20px",
-  cursor: "pointer",
-};
 
 export default StudentScan;
